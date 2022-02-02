@@ -1,0 +1,115 @@
+activities:
+  staging: "{\n    \"name\": \"Staging\",\n    \"type\": \"ForEach\",\n    \"dependsOn\"\
+    : [],\n    \"userProperties\": [],\n    \"typeProperties\": {\n        \"items\"\
+    : {\n            \"value\": \"@pipeline().parameters.cw_items\",\n           \
+    \ \"type\": \"Expression\"\n        },\n        \"activities\": [\n          \
+    \  {\n                \"name\": \"Copy_Table\",\n                \"type\": \"\
+    Copy\",\n                \"dependsOn\": [],\n                \"policy\": {\n \
+    \                   \"timeout\": \"7.00:00:00\",\n                    \"retry\"\
+    : 0,\n                    \"retryIntervalInSeconds\": 30,\n                  \
+    \  \"secureOutput\": false,\n                    \"secureInput\": false\n    \
+    \            },\n                \"userProperties\": [\n                    {\n\
+    \                        \"name\": \"Source\",\n                        \"value\"\
+    : \"sppl.@{item().source.table}\"\n                    },\n                  \
+    \  {\n                        \"name\": \"Destination\",\n                   \
+    \     \"value\": \"staging/BreweryManagementSystem/@{formatDateTime(pipeline().parameters.windowStart,'yyyy')}/@{formatDateTime(pipeline().parameters.windowStart,'MM')}/@{formatDateTime(pipeline().parameters.windowStart,'dd')}/@{item().destination.fileName}\"\
+    \n                    }\n                ],\n                \"typeProperties\"\
+    : {\n                    \"source\": {\n                        \"type\": \"AzurePostgreSqlSource\"\
+    \n                    },\n                    \"sink\": {\n                  \
+    \      \"type\": \"ParquetSink\",\n                        \"storeSettings\":\
+    \ {\n                            \"type\": \"AzureBlobFSWriteSettings\"\n    \
+    \                    },\n                        \"formatSettings\": {\n     \
+    \                       \"type\": \"ParquetWriteSettings\"\n                 \
+    \       }\n                    },\n                    \"enableStaging\": false,\n\
+    \                    \"validateDataConsistency\": false\n                },\n\
+    \                \"inputs\": [\n                    {\n                      \
+    \  \"referenceName\": \"BreweryManagementSystem__SourceDataset\",\n          \
+    \              \"type\": \"DatasetReference\",\n                        \"parameters\"\
+    : {\n                            \"cw_table\": \"@item().source.table\"\n    \
+    \                    }\n                    }\n                ],\n          \
+    \      \"outputs\": [\n                    {\n                        \"referenceName\"\
+    : \"BreweryManagementSystem__StagingDataset\",\n                        \"type\"\
+    : \"DatasetReference\",\n                        \"parameters\": {\n         \
+    \                   \"cw_fileName\": \"@item().destination.fileName\",\n     \
+    \                       \"cw_folderPath\": \"BreweryManagementSystem/@{formatDateTime(pipeline().parameters.windowStart,'yyyy')}/@{formatDateTime(pipeline().parameters.windowStart,'MM')}/@{formatDateTime(pipeline().parameters.windowStart,'dd')}\"\
+    \n                        }\n                    }\n                ]\n      \
+    \      }\n        ]\n    }\n}"
+  test: "{\n    \"name\": \"Raw\",\n    \"type\": \"SynapseNotebook\",\n    \"dependsOn\"\
+    : [\n        {\n            \"activity\": \"Staging\",\n            \"dependencyConditions\"\
+    : [\n                \"Succeeded\"\n            ]\n        }\n    ],\n    \"policy\"\
+    : {\n        \"timeout\": \"7.00:00:00\",\n        \"retry\": 0,\n        \"retryIntervalInSeconds\"\
+    : 30,\n        \"secureOutput\": false,\n        \"secureInput\": false\n    },\n\
+    \    \"userProperties\": [],\n    \"typeProperties\": {\n        \"notebook\"\
+    : {\n            \"referenceName\": \"BreweryManagementSystem__LoadRaw\",\n  \
+    \          \"type\": \"NotebookReference\"\n        },\n        \"parameters\"\
+    : {\n            \"load_date\": {\n                \"value\": {\n            \
+    \        \"value\": \"@pipeline().parameters.windowStart\",\n                \
+    \    \"type\": \"Expression\"\n                },\n                \"type\": \"\
+    string\"\n            }\n        },\n        \"snapshot\": true\n    }\n}"
+order:
+- staging
+- test
+parameters:
+  cw_items: "{\n    \"type\": \"Array\",\n    \"defaultValue\": [\n        {\n   \
+    \         \"source\": {\n                \"table\": \"pd_experiments\"\n     \
+    \       },\n            \"destination\": {\n                \"fileName\": \"pd_experiments.parquet\"\
+    \n            }\n        },\n        {\n            \"source\": {\n          \
+    \      \"table\": \"prod_ingredients\"\n            },\n            \"destination\"\
+    : {\n                \"fileName\": \"prod_ingredients.parquet\"\n            }\n\
+    \        },\n        {\n            \"source\": {\n                \"table\":\
+    \ \"prod_ingredient_products\"\n            },\n            \"destination\": {\n\
+    \                \"fileName\": \"prod_ingredient_products.parquet\"\n        \
+    \    }\n        },\n        {\n            \"source\": {\n                \"table\"\
+    : \"ma_employees\"\n            },\n            \"destination\": {\n         \
+    \       \"fileName\": \"ma_employees.parquet\"\n            }\n        },\n  \
+    \      {\n            \"source\": {\n                \"table\": \"pd_internal_ratings\"\
+    \n            },\n            \"destination\": {\n                \"fileName\"\
+    : \"pd_internal_ratings.parquet\"\n            }\n        },\n        {\n    \
+    \        \"source\": {\n                \"table\": \"pd_ingredients\"\n      \
+    \      },\n            \"destination\": {\n                \"fileName\": \"pd_ingredients.parquet\"\
+    \n            }\n        },\n        {\n            \"source\": {\n          \
+    \      \"table\": \"prod_recipes\"\n            },\n            \"destination\"\
+    : {\n                \"fileName\": \"prod_recipes.parquet\"\n            }\n \
+    \       },\n        {\n            \"source\": {\n                \"table\": \"\
+    pd_external_rating_events\"\n            },\n            \"destination\": {\n\
+    \                \"fileName\": \"pd_external_rating_events.parquet\"\n       \
+    \     }\n        },\n        {\n            \"source\": {\n                \"\
+    table\": \"prod_brews\"\n            },\n            \"destination\": {\n    \
+    \            \"fileName\": \"prod_brews.parquet\"\n            }\n        },\n\
+    \        {\n            \"source\": {\n                \"table\": \"prod_brews_mashing_rests\"\
+    \n            },\n            \"destination\": {\n                \"fileName\"\
+    : \"prod_brews_mashing_rests.parquet\"\n            }\n        },\n        {\n\
+    \            \"source\": {\n                \"table\": \"prod_brews_boilings\"\
+    \n            },\n            \"destination\": {\n                \"fileName\"\
+    : \"prod_brews_boilings.parquet\"\n            }\n        },\n        {\n    \
+    \        \"source\": {\n                \"table\": \"prod_recipes_instructions\"\
+    \n            },\n            \"destination\": {\n                \"fileName\"\
+    : \"prod_recipes_instructions.parquet\"\n            }\n        },\n        {\n\
+    \            \"source\": {\n                \"table\": \"prod_bottlings\"\n  \
+    \          },\n            \"destination\": {\n                \"fileName\": \"\
+    prod_bottlings.parquet\"\n            }\n        },\n        {\n            \"\
+    source\": {\n                \"table\": \"prod_recipes_instructions_spargings\"\
+    \n            },\n            \"destination\": {\n                \"fileName\"\
+    : \"prod_recipes_instructions_spargings.parquet\"\n            }\n        },\n\
+    \        {\n            \"source\": {\n                \"table\": \"prod_recipes_instructions_mashing_rests\"\
+    \n            },\n            \"destination\": {\n                \"fileName\"\
+    : \"prod_recipes_instructions_mashing_rests.parquet\"\n            }\n       \
+    \ },\n        {\n            \"source\": {\n                \"table\": \"prod_recipes_instructions_boilings\"\
+    \n            },\n            \"destination\": {\n                \"fileName\"\
+    : \"prod_recipes_instructions_boilings.parquet\"\n            }\n        },\n\
+    \        {\n            \"source\": {\n                \"table\": \"prod_brews_spargings\"\
+    \n            },\n            \"destination\": {\n                \"fileName\"\
+    : \"prod_brews_spargings.parquet\"\n            }\n        },\n        {\n   \
+    \         \"source\": {\n                \"table\": \"prod_brews_mashings\"\n\
+    \            },\n            \"destination\": {\n                \"fileName\"\
+    : \"prod_brews_mashings.parquet\"\n            }\n        },\n        {\n    \
+    \        \"source\": {\n                \"table\": \"prod_brews_ingredient_adds\"\
+    \n            },\n            \"destination\": {\n                \"fileName\"\
+    : \"prod_brews_ingredient_adds.parquet\"\n            }\n        },\n        {\n\
+    \            \"source\": {\n                \"table\": \"prod_recipes_instructions_mashings\"\
+    \n            },\n            \"destination\": {\n                \"fileName\"\
+    : \"prod_recipes_instructions_mashings.parquet\"\n            }\n        },\n\
+    \        {\n            \"source\": {\n                \"table\": \"prod_recipes_instructions_ingredient_adds\"\
+    \n            },\n            \"destination\": {\n                \"fileName\"\
+    : \"prod_recipes_instructions_ingredient_adds.parquet\"\n            }\n     \
+    \   }\n    ]\n}"
