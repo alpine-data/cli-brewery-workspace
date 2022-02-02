@@ -1,31 +1,3 @@
-Allegro_QA:
-  connection_type: database
-  description: Allegro UAT environment database
-  linked_service_name: null
-  name: Allegro_QA
-  parameters:
-    additional_properties: ''
-    database: ZSGDS1ALG01_DEVQA_ClaimCenter
-    database_type: MSSQL
-    host: DEVDB5585.EMEA.ZURICH.DEV
-    password_key: Allegro_QA__password
-    port: 1433
-    schema: dbo
-    username: dominikaszatkowska
-brewery:
-  connection_type: database
-  description: Sample Brewery Management System Database
-  linked_service_name: BreweryPostgres_v1
-  name: brewery
-  parameters:
-    additional_properties: ""
-    database: brewery
-    database_type: PSQL
-    host: localhost
-    password_key: brewery__password
-    port: 5432
-    schema: sppl
-    username: postgres
 breweryaz:
   connection_type: database
   description: Sample Brewery Management System Database (hosted on synapse)
