@@ -138,3 +138,5 @@ dmypy.json
 .idea
 /config/database.ini
 .DS_Store
+datavault/secrets.yaml
+datavault/secrets_known.yaml
