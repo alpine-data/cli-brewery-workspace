@@ -1,3 +1,3 @@
 # cli-brewery-workspace
 
-Test commit
+If this is in Synapse, it's a win
